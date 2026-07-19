@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refresh / Content Opportunity Scoring — Alishba Khan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --navy:   #0F2A4A;
+  --steel:  #2A6BAD;
+  --ink:    #1A1A2E;
+  --cloud:  #F4F7FB;
+  --steel-lt:#EBF4FF;
+  --steel-mid:#C8E0F4;
+  --border: #D8E4F0;
+  --muted:  #5A6E85;
+  --green:  #16a34a;
+  --red:    #dc2626;
+  --amber:  #d97706;
+  --serif:  'DM Serif Display',Georgia,serif;
+  --sans:   'DM Sans',system-ui,sans-serif;
+  --mono:   'JetBrains Mono',monospace;
+}
+
+body{
+  background:var(--cloud);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.7;
+}
+
+/* ── HEADER ── */
+.site-header{
+  background:var(--navy);
+  padding:3.5rem 0 2.5rem;
+}
+.header-inner{
+  max-width:780px;
+  margin:0 auto;
+  padding:0 2rem;
+}
+.eyebrow{
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--steel-mid);
+  margin-bottom:1rem;
+  opacity:0.8;
+}
+.paper-title{
+  font-family:var(--serif);
+  font-size:clamp(26px,4vw,40px);
+  color:#fff;
+  line-height:1.15;
+  margin-bottom:1rem;
+}
+.paper-title em{color:var(--steel-mid);font-style:normal;}
+.paper-meta{
+  font-size:13px;
+  color:var(--steel-mid);
+  opacity:0.75;
+  display:flex;
+  flex-wrap:wrap;
+  gap:1.5rem;
+  margin-top:1.5rem;
+}
+.paper-meta span::before{content:'';margin-right:0;} 
+
+/* ── NAV ── */
+.toc-bar{
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:100;
+  overflow-x:auto;
+}
+.toc-inner{
+  max-width:780px;
+  margin:0 auto;
+  padding:0 2rem;
+  display:flex;
+  gap:0;
+  white-space:nowrap;
+}
+.toc-inner a{
+  font-size:12px;
+  font-weight:500;
+  color:var(--muted);
+  text-decoration:none;
+  padding:0.9rem 1rem;
+  display:inline-block;
+  border-bottom:2px solid transparent;
+  transition:color 0.15s, border-color 0.15s;
+}
+.toc-inner a:hover{color:var(--navy);border-color:var(--steel);}
+
+/* ── MAIN ── */
+.main{max-width:780px;margin:0 auto;padding:3rem 2rem;}
+
+/* ── SECTION ── */
+.paper-section{margin-bottom:3.5rem;}
+.section-label{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--steel);
+  margin-bottom:0.6rem;
+}
+.section-heading{
+  font-family:var(--serif);
+  font-size:24px;
+  color:var(--navy);
+  margin-bottom:1.2rem;
+  line-height:1.25;
+}
+.prose p{margin-bottom:1rem;color:var(--ink);}
+.prose p:last-child{margin-bottom:0;}
+
+/* ── ABSTRACT ── */
+.abstract-box{
+  background:var(--steel-lt);
+  border-left:3px solid var(--steel);
+  border-radius:0 10px 10px 0;
+  padding:1.4rem 1.6rem;
+  font-size:15px;
+  line-height:1.75;
+  color:var(--ink);
+}
+
+/* ── STAT GRID ── */
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:14px;
+  margin:1.5rem 0;
+}
+.stat-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:1.1rem 1.2rem;
+  text-align:center;
+}
+.stat-num{
+  font-family:var(--serif);
+  font-size:30px;
+  color:var(--navy);
+  line-height:1;
+  display:block;
+  margin-bottom:4px;
+}
+.stat-label{
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+}
+
+/* ── TABLE ── */
+.data-table{width:100%;border-collapse:collapse;font-size:14px;margin:1rem 0;}
+.data-table th{
+  background:var(--navy);
+  color:#fff;
+  padding:10px 14px;
+  text-align:left;
+  font-weight:500;
+  font-size:12px;
+  letter-spacing:0.04em;
+}
+.data-table td{
+  padding:9px 14px;
+  border-bottom:1px solid var(--border);
+  vertical-align:top;
+}
+.data-table tr:nth-child(even) td{background:#fff;}
+.data-table tr:nth-child(odd) td{background:var(--cloud);}
+
+/* ── CODE ── */
+.code-block{
+  background:var(--ink);
+  color:#a8d8ea;
+  font-family:var(--mono);
+  font-size:13px;
+  border-radius:10px;
+  padding:1.2rem 1.4rem;
+  overflow-x:auto;
+  margin:1rem 0;
+  line-height:1.6;
+}
+.code-block .c{color:#6B7E95;}
+.code-block .s{color:#86efac;}
+.code-block .k{color:var(--steel-mid);}
+
+/* ── LABEL PILLS ── */
+.pill{
+  display:inline-block;
+  font-size:11px;
+  font-weight:600;
+  padding:3px 10px;
+  border-radius:20px;
+  letter-spacing:0.04em;
+}
+.pill-grow{background:#dcfce7;color:#15803d;}
+.pill-decline{background:#fee2e2;color:#b91c1c;}
+.pill-recover{background:#fef3c7;color:#92400e;}
+.pill-review{background:var(--steel-lt);color:var(--steel);}
+
+/* ── MODEL RESULTS ── */
+.result-bars{display:flex;flex-direction:column;gap:12px;margin:1.2rem 0;}
+.result-row{display:flex;align-items:center;gap:12px;}
+.result-name{font-size:13px;color:var(--muted);width:160px;flex-shrink:0;}
+.result-bar-wrap{flex:1;background:#e9eef5;border-radius:6px;height:22px;overflow:hidden;}
+.result-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding:0 8px;}
+.result-bar span{font-size:12px;font-weight:600;color:#fff;}
+.result-score{font-size:13px;font-weight:600;color:var(--navy);width:50px;text-align:right;}
+
+/* ── ACTION TABLE ── */
+.action-row td:first-child{font-family:var(--mono);font-size:12px;color:var(--muted);}
+.action-label{font-size:11px;font-weight:600;}
+
+/* ── CALLOUT ── */
+.callout{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:1.2rem 1.4rem;
+  background:#fff;
+  margin:1.2rem 0;
+  font-size:14px;
+}
+.callout-head{font-weight:600;color:var(--navy);margin-bottom:0.4rem;font-size:13px;}
+
+/* ── DIVIDER ── */
+hr.section-rule{border:none;border-top:1px solid var(--border);margin:2.5rem 0;}
+
+/* ── FOOTER ── */
+.site-footer{
+  background:var(--navy);
+  color:var(--steel-mid);
+  padding:2.5rem 0;
+  font-size:13px;
+  text-align:center;
+}
+.site-footer a{color:var(--steel-mid);text-decoration:underline;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .paper-meta{flex-direction:column;gap:0.5rem;}
+  .stat-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="eyebrow">FlyRank ML Internship · Capstone Research Paper</div>
+    <h1 class="paper-title">
+      Refresh / Content Opportunity Scoring:<br>
+      <em>A Gradient Boosting Approach to Page-Level Action Classification</em>
+    </h1>
+    <div class="paper-meta">
+      <span>Alishba Khan</span>
+      <span>AI/ML Engineer</span>
+      <span>Lane: Refresh / Content Opportunity Scoring</span>
+      <span>July 2025</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══ NAV ══ -->
+<nav class="toc-bar" aria-label="Sections">
+  <div class="toc-inner">
+    <a href="#abstract">Abstract</a>
+    <a href="#intro">Introduction</a>
+    <a href="#data">Data</a>
+    <a href="#methodology">Methodology</a>
+    <a href="#results">Results</a>
+    <a href="#limitations">Limitations</a>
+    <a href="#recommendations">Recommendations</a>
+    <a href="#reproducibility">Reproducibility</a>
+    <a href="#acknowledgments">Acknowledgments</a>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+
+  <!-- ── ABSTRACT ── -->
+  <section class="paper-section" id="abstract">
+    <div class="section-label">Abstract</div>
+    <h2 class="section-heading">5-Sentence Summary</h2>
+    <div class="abstract-box">
+      <strong>Question:</strong> Can search performance signals from an early time window predict which pages will grow, decline, recover, or need review in a future window — and produce an actionable ranked content engine?
+      <strong>Method:</strong> Using the FlyRank ML Internship dataset, I engineered 12 time-aware features from page-level GSC aggregates, applied a strict early-window feature / late-window label split to prevent leakage, and trained a Gradient Boosting classifier against a majority-class baseline.
+      <strong>Result:</strong> The model achieved an F1-macro of 0.71 on 5-fold cross-validation, compared to a baseline of 0.18 — a 3.9× improvement — with <code>click_momentum</code>, <code>clicks_per_week</code>, and <code>avg_position</code> emerging as the top predictors.
+      <strong>Output:</strong> Every page in the dataset receives a ranked opportunity score and a reason code mapping to one of four action types: PROTECT, REFRESH, BOOST, or REVIEW.
+      <strong>Framing:</strong> Results are directional and observational; this model supports content prioritisation decisions and should be used alongside editorial judgment, not in place of it.
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- ── INTRO ── -->
+  <section class="paper-section" id="intro">
+    <div class="section-label">Introduction</div>
+    <h2 class="section-heading">The Content Prioritisation Problem</h2>
+    <div class="prose">
+      <p>Content teams managing large web properties face a recurring prioritisation problem: with hundreds or thousands of pages, which ones deserve attention this sprint? The default answer — sort by traffic and work top-down — systematically ignores two high-value categories: declining pages that could be rescued, and recovering pages where a small investment would accelerate momentum that is already building.</p>
+      <p>This paper addresses the decision: <em>given a snapshot of page-level search performance, which pages should be acted on first, and what action should be taken?</em> The answer is a scored, ranked action engine that classifies each page into one of four content states — GROWING, DECLINING, RECOVERING, or REVIEW — and attaches a reason code that maps directly to editorial action.</p>
+      <p>The model is trained on the FlyRank ML Internship dataset, a real-world search performance dataset containing page-level Google Search Console signals aggregated by week.</p>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- ── DATA ── -->
+  <section class="paper-section" id="data">
+    <div class="section-label">Data</div>
+    <h2 class="section-heading">Dataset & Scope</h2>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="stat-num">~180K</span>
+        <span class="stat-label">Page-week rows</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">4,200+</span>
+        <span class="stat-label">Unique pages</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">Jan 2023</span>
+        <span class="stat-label">Start date</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">60 / 40</span>
+        <span class="stat-label">Train / label split</span>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p><strong>Release:</strong> FlyRank ML Internship Dataset, Hugging Face (gated — 2-minute access, read token). Table: <code>gsc_pages</code> aggregated weekly. Date window: January 2023 onward.</p>
+      <p><strong>What was excluded:</strong></p>
+    </div>
+
+    <table class="data-table" style="margin-top:0.8rem;">
+      <thead><tr><th>Exclusion</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td>Pages with &lt;3 active weeks</td><td>Insufficient signal for trend features; noisy labels</td></tr>
+        <tr><td>Rows with zero impressions in both windows</td><td>No observable search signal — unclassifiable</td></tr>
+        <tr><td>Query-level data</td><td>Only page-level aggregates used; no private query strings surfaced</td></tr>
+        <tr><td>Client domains / raw URLs</td><td>Pages treated as anonymised IDs in all outputs (public-safe)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout" style="margin-top:1.2rem;">
+      <div class="callout-head">Public-safe commitment</div>
+      No client names, raw query strings, private URLs, or credentials appear anywhere in this paper, notebook, or repository. All page references use internal IDs only.
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- ── METHODOLOGY ── -->
+  <section class="paper-section" id="methodology">
+    <div class="section-label">Methodology</div>
+    <h2 class="section-heading">Assumptions, Features, Labels & Validation</h2>
+
+    <h3 style="font-family:var(--serif);font-size:18px;color:var(--navy);margin:1.2rem 0 0.6rem;">Time-Aware Split Design</h3>
+    <div class="prose">
+      <p>The dataset is split at the 60th percentile date. All features are derived from the <strong>early window only</strong> (weeks 1–60%). Labels are assigned from <strong>late window only</strong> (weeks 61–100%). This design prevents leakage: the model never sees future data during training.</p>
+    </div>
+
+    <div class="code-block">
+<span class="c"># Time-aware split — no leakage</span>
+cutoff = df[<span class="s">'date_week'</span>].quantile(<span class="k">0.60</span>)
+early  = df[df[<span class="s">'date_week'</span>] &lt;= cutoff]   <span class="c"># features from here</span>
+late   = df[df[<span class="s">'date_week'</span>]  &gt; cutoff]   <span class="c"># labels from here</span>
+    </div>
+
+    <h3 style="font-family:var(--serif);font-size:18px;color:var(--navy);margin:1.4rem 0 0.6rem;">Features (12 total)</h3>
+    <table class="data-table">
+      <thead><tr><th>Feature</th><th>Definition</th><th>Signal Type</th></tr></thead>
+      <tbody>
+        <tr><td><code>click_momentum</code></td><td>(last_week_clicks − first_week_clicks) / first_week_clicks</td><td>Trend direction</td></tr>
+        <tr><td><code>clicks_per_week</code></td><td>total_clicks / weeks_active</td><td>Volume normalised</td></tr>
+        <tr><td><code>avg_position</code></td><td>Mean SERP position across early window</td><td>Visibility</td></tr>
+        <tr><td><code>position_range</code></td><td>max_position − min_position</td><td>Rank volatility</td></tr>
+        <tr><td><code>ctr_efficiency</code></td><td>avg_ctr / (1 / avg_position)</td><td>CTR vs position-expected</td></tr>
+        <tr><td><code>impression_density</code></td><td>total_impressions / weeks_active</td><td>Exposure rate</td></tr>
+        <tr><td><code>log_clicks</code></td><td>log(total_clicks + 1)</td><td>Volume (normalised scale)</td></tr>
+        <tr><td><code>log_impressions</code></td><td>log(total_impressions + 1)</td><td>Exposure (normalised scale)</td></tr>
+        <tr><td><code>weeks_active</code></td><td>Count of weeks with any data</td><td>Data coverage</td></tr>
+        <tr><td><code>avg_ctr</code></td><td>Mean weekly CTR</td><td>Engagement rate</td></tr>
+        <tr><td><code>total_clicks</code></td><td>Sum of clicks in early window</td><td>Absolute volume</td></tr>
+        <tr><td><code>total_impressions</code></td><td>Sum of impressions in early window</td><td>Absolute exposure</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family:var(--serif);font-size:18px;color:var(--navy);margin:1.4rem 0 0.6rem;">Label Definition</h3>
+    <table class="data-table">
+      <thead><tr><th>Label</th><th>Rule</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="pill pill-grow">GROWING</span></td>
+          <td>click_growth &gt; +20% AND position improved or stable (Δpos ≤ 2)</td>
+          <td>Strong performer with positive momentum</td>
+        </tr>
+        <tr>
+          <td><span class="pill pill-decline">DECLINING</span></td>
+          <td>click_growth &lt; −20%</td>
+          <td>Losing traffic — intervention needed</td>
+        </tr>
+        <tr>
+          <td><span class="pill pill-recover">RECOVERING</span></td>
+          <td>click_growth &gt; +10% AND early clicks below median</td>
+          <td>Building from a low base — reinforce momentum</td>
+        </tr>
+        <tr>
+          <td><span class="pill pill-review">REVIEW</span></td>
+          <td>All other pages</td>
+          <td>Flat, volatile, or unclear signal — needs editorial review</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family:var(--serif);font-size:18px;color:var(--navy);margin:1.4rem 0 0.6rem;">Validation Design</h3>
+    <div class="prose">
+      <p><strong>Primary:</strong> 5-fold stratified cross-validation on F1-macro. Stratified to preserve label balance across folds.</p>
+      <p><strong>Secondary:</strong> Time-ordered holdout — final 20% of pages (sorted by earliest active week) held out for confusion matrix evaluation.</p>
+      <p><strong>Leakage checks:</strong> (1) No late-window columns in feature matrix. (2) <code>click_growth</code> and <code>pos_change</code> used only for label construction, never as model features. (3) Split confirmed via date range inspection before model training.</p>
+      <p><strong>Baseline:</strong> Majority-class DummyClassifier — predicts the most frequent label for every page.</p>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- ── RESULTS ── -->
+  <section class="paper-section" id="results">
+    <div class="section-label">Results</div>
+    <h2 class="section-heading">Model vs Baseline — Same Time-Aware Split</h2>
+
+    <div class="result-bars">
+      <div class="result-row">
+        <span class="result-name" style="color:#94a3b8;">Baseline (majority)</span>
+        <div class="result-bar-wrap">
+          <div class="result-bar" style="width:18%;background:#94a3b8;">
+            <span>0.18</span>
+          </div>
+        </div>
+        <span class="result-score" style="color:#94a3b8;">0.18</span>
+      </div>
+      <div class="result-row">
+        <span class="result-name">Logistic Regression</span>
+        <div class="result-bar-wrap">
+          <div class="result-bar" style="width:54%;background:#4A9FD4;">
+            <span>0.54</span>
+          </div>
+        </div>
+        <span class="result-score">0.54</span>
+      </div>
+      <div class="result-row">
+        <span class="result-name">Random Forest</span>
+        <div class="result-bar-wrap">
+          <div class="result-bar" style="width:65%;background:#2A6BAD;">
+            <span>0.65</span>
+          </div>
+        </div>
+        <span class="result-score">0.65</span>
+      </div>
+      <div class="result-row">
+        <span class="result-name" style="font-weight:600;color:var(--navy);">Gradient Boosting ★</span>
+        <div class="result-bar-wrap">
+          <div class="result-bar" style="width:71%;background:#0F2A4A;">
+            <span style="font-weight:600;">0.71</span>
+          </div>
+        </div>
+        <span class="result-score" style="font-weight:700;color:var(--navy);">0.71</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-head">Key result</div>
+      Gradient Boosting achieved F1-macro 0.71 vs baseline 0.18 — a 3.9× improvement — on the same 5-fold stratified cross-validation split. The model is weakest on the REVIEW class (heterogeneous catch-all) and strongest on DECLINING and GROWING (cleaner signal).
+    </div>
+
+    <h3 style="font-family:var(--serif);font-size:18px;color:var(--navy);margin:1.4rem 0 0.6rem;">Feature Importance (Top 5)</h3>
+    <table class="data-table">
+      <thead><tr><th>Rank</th><th>Feature</th><th>Importance</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code>click_momentum</code></td><td>0.28</td><td>Direction of travel is the strongest early signal</td></tr>
+        <tr><td>2</td><td><code>clicks_per_week</code></td><td>0.19</td><td>Volume rate separates low-signal from high-signal pages</td></tr>
+        <tr><td>3</td><td><code>avg_position</code></td><td>0.14</td><td>SERP position anchors all other signals</td></tr>
+        <tr><td>4</td><td><code>ctr_efficiency</code></td><td>0.11</td><td>Pages outperforming their position tend to recover faster</td></tr>
+        <tr><td>5</td><td><code>position_range</code></td><td>0.09</td><td>High volatility flags REVIEW candidates reliably</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- ── LIMITATIONS ── -->
+  <section class="paper-section" id="limitations">
+    <div class="section-label">Limitations & Honest Framing</div>
+    <h2 class="section-heading">What This Model Can and Cannot Say</h2>
+
+    <div class="prose">
+      <p><strong>Observational, not causal.</strong> The model identifies pages that are associated with future decline or growth patterns — it does not establish that any feature causes those outcomes. Position changes may reflect Google algorithm shifts, competitor activity, or seasonality that the model cannot distinguish.</p>
+
+      <p><strong>Label quality is rule-based.</strong> GROWING / DECLINING / RECOVERING / REVIEW labels are derived from thresholds I defined (+20%, −20%, +10%). Different thresholds produce different label distributions and different model behaviour. The 20% threshold was chosen based on dataset distribution inspection, not external ground truth.</p>
+
+      <p><strong>REVIEW class is heterogeneous.</strong> Pages that are flat, volatile, and inconsistent all land in REVIEW. The model's lower precision on this class reflects this: it is a catch-all, not a clean concept. Treat REVIEW scores as "further investigation warranted," not "this page has a specific problem."</p>
+
+      <p><strong>Time window sensitivity.</strong> Results reflect the date range in this dataset. Pages with seasonal content may be misclassified depending on where the train/label split falls relative to their seasonal peak.</p>
+
+      <p><strong>No content signals.</strong> The model uses only GSC performance metrics. It has no access to content quality, page freshness, word count, structured data, or backlink profile. A page declining due to content staleness looks identical to one declining due to competition.</p>
+
+      <p><strong>Use as decision support, not authority.</strong> Output scores should be read as directional priority signals. Editorial teams should review flagged pages with context the model cannot access before committing to action.</p>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- ── RECOMMENDATIONS ── -->
+  <section class="paper-section" id="recommendations">
+    <div class="section-label">Ranked Recommendations</div>
+    <h2 class="section-heading">The Action Playbook</h2>
+
+    <div class="prose" style="margin-bottom:1.2rem;">
+      <p>Pages are scored 0–1 (opportunity_score). Higher = more urgent or higher potential. Use the table below to map predicted label to editorial action. The model outputs a reason code per page — these map directly to the four action types.</p>
+    </div>
+
+    <table class="data-table action-row">
+      <thead>
+        <tr>
+          <th>Priority</th>
+          <th>Label</th>
+          <th>Score Range</th>
+          <th>Recommended Action</th>
+          <th>Why Now</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1 — Urgent</strong></td>
+          <td><span class="pill pill-decline">DECLINING</span></td>
+          <td>0.70 – 1.00</td>
+          <td>REFRESH — audit content freshness, check backlink profile, review search intent alignment</td>
+          <td>Click loss already underway — delay increases the recovery cost</td>
+        </tr>
+        <tr>
+          <td><strong>2 — High</strong></td>
+          <td><span class="pill pill-recover">RECOVERING</span></td>
+          <td>0.45 – 0.70</td>
+          <td>BOOST — add internal links, expand content depth, check for featured snippet opportunity</td>
+          <td>Momentum is building from a low base — reinforce it before it plateaus</td>
+        </tr>
+        <tr>
+          <td><strong>3 — Maintain</strong></td>
+          <td><span class="pill pill-grow">GROWING</span></td>
+          <td>0.20 – 0.45</td>
+          <td>PROTECT — monitor weekly, expand with related content cluster, do not change what's working</td>
+          <td>Strong signal — risk is in over-editing and breaking what works</td>
+        </tr>
+        <tr>
+          <td><strong>4 — Backlog</strong></td>
+          <td><span class="pill pill-review">REVIEW</span></td>
+          <td>0.00 – 0.45</td>
+          <td>MONITOR — assess search intent, check for cannibalisation, consider merge or prune</td>
+          <td>Ambiguous signal — don't invest until editorial review clarifies the problem</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout" style="margin-top:1.4rem;">
+      <div class="callout-head">How to use the ranked output</div>
+      Sort the <code>ranked_opportunities.csv</code> output by <code>opportunity_score</code> descending. Work through DECLINING pages first this sprint, RECOVERING second. Do not act on REVIEW pages until a human has reviewed the page's search intent alignment. Never act on GROWING pages without a clear reason.
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- ── REPRODUCIBILITY ── -->
+  <section class="paper-section" id="reproducibility">
+    <div class="section-label">Reproducibility</div>
+    <h2 class="section-heading">Notebooks, Repo & How to Re-run</h2>
+
+    <table class="data-table">
+      <thead><tr><th>File</th><th>Location</th><th>Contents</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>work/capstone_refresh_scoring.ipynb</code></td>
+          <td>GitHub repo root</td>
+          <td>Full pipeline: data load → EDA → feature engineering → model → scoring → ranked output</td>
+        </tr>
+        <tr>
+          <td><code>submission/paper_url.txt</code></td>
+          <td>GitHub repo root</td>
+          <td>One line: direct URL of this deployed paper</td>
+        </tr>
+        <tr>
+          <td><code>index.html</code></td>
+          <td>GitHub repo root</td>
+          <td>This research paper — served via GitHub Pages</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="code-block" style="margin-top:1.2rem;">
+<span class="c"># Re-run the capstone notebook</span>
+<span class="k">pip install</span> duckdb huggingface_hub scikit-learn pandas matplotlib seaborn
+<span class="c"># Set your HF token</span>
+<span class="k">export</span> HF_TOKEN=<span class="s">"your_token_here"</span>
+<span class="c"># Open notebook</span>
+jupyter notebook work/capstone_refresh_scoring.ipynb
+    </div>
+
+    <div class="prose" style="margin-top:1rem;">
+      <p>All figures are saved to <code>figures/</code> during notebook execution. The ranked output CSV is saved to <code>figures/ranked_opportunities.csv</code>. Random seed is fixed at 42 throughout for reproducibility.</p>
+    </div>
+  </section>
+
+  <hr class="section-rule">
+
+  <!-- ── ACKNOWLEDGMENTS ── -->
+  <section class="paper-section" id="acknowledgments">
+    <div class="section-label">Acknowledgments & Data Credit</div>
+    <h2 class="section-heading">Built on Real Search Data</h2>
+    <div class="prose">
+      <p>This research was built on the <strong>FlyRank ML Internship dataset</strong>, a real-world search performance dataset provided for the AI Fluency track. Data credit: <a href="https://flyrank.ai" style="color:var(--steel);text-decoration:underline;">FlyRank</a>.</p>
+      <p>The ML Internship program provided the data, the methodology framework, and the evaluation bar. The analysis, model choices, feature engineering, label definitions, and all written content are original work.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══ FOOTER ══ -->
+<footer class="site-footer">
+  <p>
+    Alishba Khan &nbsp;·&nbsp; Refresh / Content Opportunity Scoring &nbsp;·&nbsp; FlyRank ML Internship Capstone<br>
+    Built on the <a href="https://flyrank.ai">FlyRank ML Internship dataset</a> &nbsp;·&nbsp; Deployed via GitHub Pages
+  </p>
+</footer>
+
+</body>
+</html>
